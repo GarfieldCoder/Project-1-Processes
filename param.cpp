@@ -30,8 +30,13 @@ Param::Param(int argc, char* argv[])
       outputRedirect(nullptr),
       background(0),
       argumentCount(argc) {
+	//limit the count *the array only has MAXARGS spaces
+	if (argumentCount > MAXARGS) {
+		argumentCount = MAXARGS;
+	}
+
 	for (int i=0; i<MAXARGS; ++i) {
-		if (i < argc) {
+		if (i < argumentCount) {
 			//copy the argument bcoz the original pointer only lived as long as the parser buffer
 			argumentVector[i] = copyString(argv[i]);
 		} else {
