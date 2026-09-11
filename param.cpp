@@ -12,8 +12,20 @@ Param::Param()
     }
 }
 
-Param::~Param() {
+Param::Param(int argc, char* argv[])
+    : inputRedirect(nullptr),
+      outputRedirect(nullptr),
+      background(0),
+      argumentCount(argc) {
+	for (int i=0; i<MAXARGS; ++i) {
+		if (i < argc) {
+			argumentVector[i] = argv[i];
+		} else {
+			argumentVector[i] = nullptr;
+		}
+	}
 }
+
 
 void Param::printParams() const {
     std::cout << "inputRedirect: "
