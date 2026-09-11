@@ -6,7 +6,6 @@
 
 using namespace std;
 
-// This function runs one command through the parser and prints the result.
 void runTest(int testNumber, const char *description, const char *command) {
     Param params;
     char input[200];
@@ -17,7 +16,7 @@ void runTest(int testNumber, const char *description, const char *command) {
     cout << "Input: " << command << endl;
     cout << "Program output:" << endl;
 
-    parseCommand(input, params);
+    parse(input, params);
     params.printParams();
 
     cout << endl;
@@ -44,7 +43,7 @@ int main() {
          << "as arguments." << endl;
     cout << endl;
 
-    // Test 3 checks that strtok ignores repeated spaces and tab characters.
+    // Test 3 checks repeated spaces and tab characters.
     runTest(3, "Extra spaces and tabs", "cat     \ttestfile.txt");
     cout << "Expected result: Two arguments named cat and testfile.txt."
          << endl;
@@ -52,7 +51,7 @@ int main() {
          << endl;
     cout << endl;
 
-    // Test 4 checks input redirection without output or background syntax.
+    // Test 4 checks input redirection without other special syntax.
     runTest(4, "Input redirect only", "cat <myshell.cpp");
     cout << "Expected result: One argument named cat and input myshell.cpp."
          << endl;

@@ -1,29 +1,26 @@
-#ifndef PARAM_HPP
-#define PARAM_HPP
+#ifndef PARAM_H
+#define PARAM_H
 
-// The handout states that no test input will contain more than MAXARGS tokens.
-#define MAXARGS 32
+#define MAXARGS 32 // don't test more than this many args or the computer will explode!
 
 class Param {
-private:
-    char *inputRedirect;
-    char *outputRedirect;
-    int background;
-    int argumentCount;
-    char *argumentVector[MAXARGS];
+	private:
+		char *inputRedirect; /* file name or NULL */
+		char *outputRedirect; /* file name or NULL */
+		int background; /* either 0 (false) or 1 (true) */
+		int argumentCount; /* number of tokens in argument vector */
+		char *argumentVector[MAXARGS]; /* array of strings */
 
-public:
-    Param();
-    ~Param();
-
-    // Clear data from the previous command before parsing a new one.
-    void reset();
-    void setInputRedirect(const char *filename);
-    void setOutputRedirect(const char *filename);
-    void setBackground(int value);
-    void addArgument(const char *argument);
-
-    void printParams() const;
+	public:
+		Param();
+		Param(int argc, char* argv[]);
+		~Param();
+		void reset();
+		void setInputRedirect(const char *filename);
+		void setOutputRedirect(const char *filename);
+		void setBackground(int value);
+		void addArgument(const char *argument);
+		void printParams() const;
 };
 
 #endif

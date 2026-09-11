@@ -1,39 +1,37 @@
 #include "parse.hpp"
-
 #include <cstring>
+#include <cstdlib>
 #include <iostream>
 
-using namespace std;
+void parse(std::string input, Param &params) {
+	params.reset();
 
-void parseCommand(char *input, Param &params) {
-    char *token;
+	//duplicate string as char array so it can be tokenized
+	char *buffer = strdup(input.c_str());
 
-    params.reset();
+	char *token = strtok(buffer, " \t\n");
+	while (token != nullptr) {
+		if (token[0] == '<' && token[1] != '\0') {
+			params.setInputRedirect(token + 1);
+		}
+		else if (token[0] == '>' && token[1] != '\0') {
+			params.setOutputRedirect(token + 1);
+		}
+		else if (strcmp(token, "&") == 0) {
+			params.setBackground(1);
+		}
+		else if (strcmp(token, "<") == 0 || strcmp(token, ">") == 0) {
+			//check missing redirect filename *this parser expects <file or >file
+			std::cerr << "Error: a redirect must include a filename.";
+			std::cerr << std::endl;
+		}
+		else {
+			params.addArgument(token);
+		}
 
-    // strtok treats any run of spaces, tabs, and newlines as a delimiter.
-    token = strtok(input, " \t\n");
-    while (token != nullptr) {
-        if (token[0] == '<' && token[1] != '\0') {
-            params.setInputRedirect(token + 1);
-        }
-        else if (token[0] == '>' && token[1] != '\0') {
-            params.setOutputRedirect(token + 1);
-        }
-        else if (strcmp(token, "<") == 0) {
-            // This parser requires the filename to touch the redirect symbol.
-            cerr << "Error: a redirect must include a filename." << endl;
-        }
-        else if (strcmp(token, ">") == 0) {
-            // This parser requires the filename to touch the redirect symbol.
-            cerr << "Error: a redirect must include a filename." << endl;
-        }
-        else if (strcmp(token, "&") == 0) {
-            params.setBackground(1);
-        }
-        else {
-            params.addArgument(token);
-        }
+		token = strtok(nullptr, " \t\n");
+	}
 
-        token = strtok(nullptr, " \t\n");
-    }
+	//free the buffer *Param owns copies of the strings now
+	free(buffer);
 }

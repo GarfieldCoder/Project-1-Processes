@@ -1,48 +1,35 @@
+#include <iostream>
+#include <string>
 #include "param.hpp"
 #include "parse.hpp"
 
-#include <cstring>
-#include <iostream>
-#include <string>
+int main(int argc, char* argv[]) {
+	std::string buff;
+	Param params;
 
-using namespace std;
+	while(true) {
+		//display prompt on stdout
+		std::cout << ">>> ";
 
-int main(int argc, char *argv[]) {
-    bool debug;
-    Param params;
-    string command;
-    char *input;
+		//accept command string from user *check getline so eof also closes the shell
+		if (!std::getline(std::cin, buff)) {
+			break;
+		}
 
-    debug = false;
-    if (argc > 1) {
-        if (strcmp(argv[1], "-Debug") == 0) {
-            debug = true;
-        }
-    }
+		//terminate on exit command
+		if(buff == "exit") {
+			break;
+		}
 
-    while (true) {
-        cout << "$$$ ";
-        cout.flush();
+		//parse input into tokens and store in Param
+		//pass params into parse *this will let the parser set redirects and background too
+		parse(buff, params);
 
-        // getline reads the whole command, including spaces between words.
-        if (!getline(cin, command)) {
-            break;
-        }
-
-        if (command == "exit") {
-            break;
-        }
-
-        // strtok needs a writable, null-terminated character array.
-        input = new char[command.length() + 1];
-        strcpy(input, command.c_str());
-        parseCommand(input, params);
-        delete[] input;
-
-        if (debug) {
-            params.printParams();
-        }
-    }
-
-    return 0;
+		//print contents when -Debug flag
+		if(argc >= 2 && std::string(argv[1]) == "-Debug") {
+			params.printParams();
+		}
+		//std::cout << buff << std::endl;
+	}
+	return 0;
 }
