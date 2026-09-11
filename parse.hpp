@@ -1,9 +1,9 @@
-#ifndef PARSE_HPP
-#define PARSE_HPP
+#ifndef PARSE_H
+#define PARSE_H
 
+#include <string>
 #include "param.hpp"
 
-// Parses one writable, null-terminated command line into params.
-void parseCommand(char *input, Param &params);
+Param parse(std::string input);
 
 #endif
