@@ -4,7 +4,7 @@ CXXFLAGS = -g -Wall
 TARGET = myshell
 OBJECTS = myshell.o parse.o param.o
 
-.PHONY: all clean
+.PHONY: all test clean
 
 all: $(TARGET)
 
@@ -20,5 +20,10 @@ parse.o: parse.cpp parse.hpp param.hpp
 param.o: param.cpp param.hpp
 	$(CXX) $(CXXFLAGS) -c param.cpp
 
+test: test_part1
+
+test_part1: test_part1.cpp parse.o param.o
+	$(CXX) $(CXXFLAGS) -o test_part1 test_part1.cpp parse.o param.o
+
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET) test_part1

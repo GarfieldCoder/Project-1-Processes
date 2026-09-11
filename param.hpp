@@ -16,6 +16,13 @@ public:
     Param();
     ~Param();
 
+    // Clear data from the previous command before parsing a new one.
+    void reset();
+    void setInputRedirect(const char *filename);
+    void setOutputRedirect(const char *filename);
+    void setBackground(int value);
+    void addArgument(const char *argument);
+
     void printParams() const;
 };
 
