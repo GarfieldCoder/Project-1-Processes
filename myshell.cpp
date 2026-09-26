@@ -2,6 +2,7 @@
 #include <string>
 #include "param.hpp"
 #include "parse.hpp"
+#include "execute.hpp"
 
 int main(int argc, char* argv[]) {
 	std::string buff;
@@ -29,7 +30,8 @@ int main(int argc, char* argv[]) {
 		if(argc >= 2 && std::string(argv[1]) == "-Debug") {
 			params.printParams();
 		}
-		//std::cout << buff << std::endl;
+
+		executeCommand(params);
 	}
 	return 0;
 }

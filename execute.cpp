@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <sys/wait.h>
 
 ExecuteResult executeCommand(const Param &params) {
 	ExecuteResult failure = {false, false, static_cast<pid_t>(-1)};
@@ -45,6 +46,7 @@ ExecuteResult executeCommand(const Param &params) {
 	 * returning. For a background command, do not wait here; return its PID so
 	 * myshell.cpp can register it with the jobs module.
 	 */
+	waitpid(childPid, nullptr, 0);
 	ExecuteResult result = {true, params.getBackground() != 0, childPid};
 	return result;
 }
