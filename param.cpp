@@ -20,7 +20,7 @@ Param::Param()
       outputRedirect(nullptr),
       background(0),
       argumentCount(0) {
-    for (int index = 0; index < MAXARGS; ++index) {
+    for (int index = 0; index <= MAXARGS; ++index) {
         argumentVector[index] = nullptr;
     }
 }
@@ -35,7 +35,7 @@ Param::Param(int argc, char* argv[])
 		argumentCount = MAXARGS;
 	}
 
-	for (int i=0; i<MAXARGS; ++i) {
+	for (int i=0; i<=MAXARGS; ++i) {
 		if (i < argumentCount) {
 			//copy the argument bcoz the original pointer only lived as long as the parser buffer
 			argumentVector[i] = copyString(argv[i]);
@@ -63,6 +63,7 @@ void Param::reset() { //memory leak :'(
 	}
 
 	argumentCount = 0;
+	argumentVector[0] = nullptr;
 } //memory is happy
 
 //added setters and getters for Param class
@@ -84,7 +85,28 @@ void Param::addArgument(const char *argument) {
 	if (argumentCount < MAXARGS) {
 		argumentVector[argumentCount] = copyString(argument);
 		argumentCount++;
+		argumentVector[argumentCount] = nullptr;
 	}
+}
+
+const char *Param::getInputRedirect() const {
+	return inputRedirect;
+}
+
+const char *Param::getOutputRedirect() const {
+	return outputRedirect;
+}
+
+int Param::getBackground() const {
+	return background;
+}
+
+int Param::getArgumentCount() const {
+	return argumentCount;
+}
+
+char *const *Param::getArgumentVector() const {
+	return argumentVector;
 }
 
 void Param::printParams() const {

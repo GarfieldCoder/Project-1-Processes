@@ -9,7 +9,8 @@ class Param {
 		char *outputRedirect; /* file name or NULL */
 		int background; /* either 0 (false) or 1 (true) */
 		int argumentCount; /* number of tokens in argument vector */
-		char *argumentVector[MAXARGS]; /* array of strings */
+		/* One extra entry is reserved for the NULL pointer required by exec(). */
+		char *argumentVector[MAXARGS + 1]; /* array of strings */
 
 	public:
 		Param();
@@ -20,6 +21,11 @@ class Param {
 		void setOutputRedirect(const char *filename);
 		void setBackground(int value);
 		void addArgument(const char *argument);
+		const char *getInputRedirect() const;
+		const char *getOutputRedirect() const;
+		int getBackground() const;
+		int getArgumentCount() const;
+		char *const *getArgumentVector() const;
 		void printParams() const;
 };
 

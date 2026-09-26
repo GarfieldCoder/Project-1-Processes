@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -g -Wall
 
 TARGET = myshell
-OBJECTS = myshell.o parse.o param.o
+OBJECTS = myshell.o parse.o param.o execute.o jobs.o
 
 .PHONY: all test clean
 
@@ -19,6 +19,12 @@ parse.o: parse.cpp parse.hpp param.hpp
 
 param.o: param.cpp param.hpp
 	$(CXX) $(CXXFLAGS) -c param.cpp
+
+execute.o: execute.cpp execute.hpp param.hpp
+	$(CXX) $(CXXFLAGS) -c execute.cpp
+
+jobs.o: jobs.cpp jobs.hpp
+	$(CXX) $(CXXFLAGS) -c jobs.cpp
 
 test: test_part1
 
