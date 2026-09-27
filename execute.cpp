@@ -46,7 +46,16 @@ ExecuteResult executeCommand(const Param &params) {
 	 * returning. For a background command, do not wait here; return its PID so
 	 * myshell.cpp can register it with the jobs module.
 	 */
+
 	waitpid(childPid, nullptr, 0);
-	ExecuteResult result = {true, params.getBackground() != 0, childPid};
+	/*
+ 	* We save whether the child started, whether it is running in the background,
+ 	* and its PID so myshell can decide if jobs.cpp, the home of background
+	* process IDs, needs to keep track of it.
+	*/
+	ExecuteResult result = {
+		true,
+		params.getBackground() != 0,
+		childPid};
 	return result;
 }

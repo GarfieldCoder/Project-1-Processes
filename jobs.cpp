@@ -1,12 +1,25 @@
 #include "jobs.hpp"
 
-void registerBackgroundProcess(pid_t childPid) {
+#include <vector>
+static std::vector<pid_t> backgroundPids; //Shared by all functions in file.
+
 	/*
-	 * TODO Part II - background PID tracking:
-	 * Store childPid in a collection of active background process IDs. Ignore
-	 * invalid PIDs, and avoid registering the same PID more than once.
-	 */
-	(void)childPid;
+	* Background PID tracking:
+	* Store childPid in a collection of active background process IDs.
+	* Ignore invalid PIDs, and registering the same PID more than once.  
+	*/
+void registerBackgroundProcess(pid_t childPid) {
+	if (childPid <= 0) {
+        return;
+    }
+
+    for (pid_t storedPid : backgroundPids) {
+        if (storedPid == childPid) {
+            return;
+        }
+    }
+
+    backgroundPids.push_back(childPid);
 }
 
 void reapBackgroundProcesses() {
