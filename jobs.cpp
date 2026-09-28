@@ -1,5 +1,5 @@
 #include "jobs.hpp"
-
+#include <sys/wait.h>
 #include <vector>
 static std::vector<pid_t> backgroundPids; //Shared by all functions in file.
 
@@ -23,19 +23,38 @@ void registerBackgroundProcess(pid_t childPid) {
 }
 
 void reapBackgroundProcesses() {
-	/*
-	 * TODO Part II - prevent zombie processes while the shell is running:
-	 * Check the stored background PIDs with waitpid() and WNOHANG. Remove each
-	 * PID whose child has finished. Do not block while a child is still active.
-	 * This function should be called regularly, such as before each prompt.
-	 */
+	//Start at the first PID in the vector.
+    auto current = backgroundPids.begin();
+
+    //Continue until every stored PID has been checked.
+    while (current != backgroundPids.end()) {
+        //WNOHANG checks the child without making myshell stop and wait.
+        pid_t result = waitpid(*current, nullptr, WNOHANG);
+
+        //A result of 0 means the child is still running.
+        if (result == 0) {
+            //Move to the next PID without removing this one.
+            current++;
+        }
+        else {
+            //The child finished, so remove its PID.
+            //erase() returns the position of the next PID.
+            current = backgroundPids.erase(current);
+        }
+    }
 }
 
+/* 
+	 * Wait for every remaining background child before myshell exits,
+	 * then clear the collection of background PIDs.
+	 */ 
 void waitForAllBackgroundProcesses() {
-	/*
-	 * TODO Part II - clean shutdown:
-	 * When the user enters exit or input reaches EOF, call waitpid() for every
-	 * background PID that is still stored. Do not let myshell terminate until
-	 * all of its background children have finished, then clear the collection.
-	 */
+	//Visit every background PID that is still stored.
+    for (pid_t childPid : backgroundPids) {
+        //The 0 option makes myshell wait until this child finishes.
+        waitpid(childPid, nullptr, 0);
+    }
+
+    //All background children are finished, so remove their stored PIDs.
+    backgroundPids.clear();
 }

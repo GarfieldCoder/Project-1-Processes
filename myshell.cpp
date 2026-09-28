@@ -3,12 +3,16 @@
 #include "param.hpp"
 #include "parse.hpp"
 #include "execute.hpp"
+#include "jobs.hpp"
 
 int main(int argc, char* argv[]) {
 	std::string buff;
 	Param params;
 
 	while(true) {
+		// COLLECT ANY BACKGROUND PROCESSES THAT HAVE FINISHED
+		reapBackgroundProcesses(); 
+
 		//display prompt on stdout
 		std::cout << ">>> ";
 
@@ -30,8 +34,17 @@ int main(int argc, char* argv[]) {
 		if(argc >= 2 && std::string(argv[1]) == "-Debug") {
 			params.printParams();
 		}
+		
 
-		executeCommand(params);
+		ExecuteResult result = executeCommand(params); //Returns started, background, and childPid, to pass background PIDs to jobs :P
+
+		//Track the child PID only when a background process started successfully.
+		if (result.started && result.background) {
+			registerBackgroundProcess(result.childPid);
+		}
+
 	}
+
+	waitForAllBackgroundProcesses(); //handle possible shutdown paths 
 	return 0;
 }

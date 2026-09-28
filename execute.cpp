@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <cerrno>
 
 ExecuteResult executeCommand(const Param &params) {
 	ExecuteResult failure = {false, false, static_cast<pid_t>(-1)};
@@ -40,14 +41,24 @@ ExecuteResult executeCommand(const Param &params) {
 		_exit(127);
 	}
 
-	/*
-	 * TODO - handle the child in the parent.
-	 * For a foreground command, call waitpid() for this specific child before
-	 * returning. For a background command, do not wait here; return its PID so
-	 * myshell.cpp can register it with the jobs module.
-	 */
+	bool background = params.getBackground() != 0;
 
-	waitpid(childPid, nullptr, 0);
+	/*
+	* Foreground commands must finish before myshell displays another prompt.
+	* Background commands return immediately so jobs.cpp can track their PID.
+	*/
+	if (!background) {
+		pid_t waitResult;
+
+		do {
+			waitResult = waitpid(childPid, nullptr, 0);
+		} while (waitResult == -1 && errno == EINTR); // A system call was interrupted by a signal before it finished.
+
+		if (waitResult == -1) {
+			perror("myshell: waitpid");
+		}
+	}
+
 	/*
  	* We save whether the child started, whether it is running in the background,
  	* and its PID so myshell can decide if jobs.cpp, the home of background
@@ -56,6 +67,7 @@ ExecuteResult executeCommand(const Param &params) {
 	ExecuteResult result = {
 		true,
 		params.getBackground() != 0,
-		childPid};
+		childPid
+	};
 	return result;
 }
